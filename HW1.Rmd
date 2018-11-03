@@ -1,0 +1,285 @@
+---
+title: "Computation for Analytics 1"
+output: html_notebook
+---
+By:  Xavier M. Puspus  
+Intro to R: Homework 1
+
+# 1. WHO Dataset
+
+Find out:  
+  + country with the biggest population,
+  + population of Malaysia,
+  + Country with the lowest literacy,  
+  + Richest country in Europe based on GNI,  
+  + Mean life expetancy of countries in Africa,  
+  + Number of countries with population greater than 10,000,  
+  + Top 5 countries in the Americas with the highest child mortality.  
+  
+
+### Read Data  
+Load WHO dataset and display first 6 rows.
+```{r echo = FALSE}
+
+# Load Data
+who_df = read.csv('data/WHO.csv')
+head(who_df)
+```
+### Data of Country with the biggest population  
+Metadata of country with biggest population.
+```{r echo = FALSE}
+who_df[which.max(who_df$Population),]
+```
+### Country with the biggest population
+```{r echo = FALSE}
+who_df[which.max(who_df$Population),]$Country
+```
+### Country with Lowest Literacy Rate  
+```{r echo = FALSE}
+# Get columns we need
+who_df_lit = who_df[c('Country', 'LiteracyRate')]
+
+# Remove NAs
+who_df_lit_nona = who_df_lit[complete.cases(who_df_lit),]
+
+# Get bottom 10
+bottom_10_lit = tail(who_df_lit_nona[order(who_df_lit_nona$LiteracyRate, decreasing = TRUE),], 10)
+
+# Get Country with lowest literacy rate
+bottom_10_lit[10,][1]
+```
+### Richest Country in Europe Based on GNI
+```{r echo = FALSE}
+
+# Get columns we need filtering for Region = Europe
+who_df_gni = who_df[which(who_df$Region == "Europe"),][c('Country', 'GNI')]
+
+# Remove NAs
+who_df_gni_nona = who_df_gni[complete.cases(who_df_gni),]
+
+# Get top 10
+top_10_gni = head(who_df_gni_nona[order(who_df_gni_nona$GNI, decreasing = TRUE),], 10)
+
+#Get Country with lowest literacy rate
+
+top_10_gni[1,][1]
+```
+```{r echo = FALSE}
+who_df[which(who_df$Region == "Europe"),][which.max(who_df[which(who_df$Region == "Europe"),]$GNI),]$Country
+```
+
+### Mean life expetancy of countries in Africa
+```{r echo = FALSE}
+who_df_le = who_df[which(who_df$Region == "Africa"),][c('Country', 'LifeExpectancy')]
+mean(who_df_le$LifeExpectancy, na.rm = TRUE)
+```
+### Number of countries with population greater than 10,000
+```{r echo = FALSE}
+who_df[which(who_df$Population > 10000),]
+```
+```{r echo = FALSE}
+dim(who_df[which(who_df$Population > 10000),])[1]
+```
+
+### Top 5 countries in the Americas with the highest child mortality
+```{r echo = FALSE}
+who_df_cm = who_df[which(who_df$Region == "Americas"),][c('Country', 'ChildMortality')]
+who_df_cm_nona = who_df_cm[complete.cases(who_df_cm),]
+top_10_cm = head(who_df_cm_nona[order(who_df_cm_nona$ChildMortality, decreasing = TRUE),], 5)
+top_10_cm
+```
+```{r}
+top_10_cm$Country
+```
+
+# 2. Historical NBA Performance
+
+Find out:  
++ The year Bulls has the highest winning percentage,  
++ Teams with an even win-loss record in a year.   
+
+
+### Read Data
+```{r echo = FALSE}
+# Load Library
+library("readxl")
+
+# Read Data
+data = read_excel('data/Historical NBA Performance.xlsx')
+
+# Rename last column
+names(data)[4]<-"win_pct"
+head(data)
+```
+
+### The year the Bulls had the Highest Winning Percentage
+```{r echo = FALSE}
+# Who are the teams with the highest winning percentage each year? (using highest win percentage of all time)
+bulls_data = data[which(data$Team == 'Bulls'),]
+bulls_data[which.max(bulls_data$win_pct),]['Year']
+```
+
+### Data with an Even-Win Loss Percentages
+
+```{r echo = FALSE}
+# Even Win-loss 
+
+# Create table that splits win loss
+wl = do.call(cbind, c(data, read.table(text = data$Record, sep = "-", colClasses = "character")))
+
+# Convert to DataFrame
+wl = as.data.frame.matrix(wl) 
+
+# Convert last 2 columns to numeric
+wl$V1 = as.numeric(as.character(wl$V1))
+wl$V2 = as.numeric(as.character(wl$V2))
+
+# Replace columns
+names(wl)[5] = 'Win'
+names(wl)[6] = 'Loss'
+
+# Inspect data we've cleaned
+head(wl)
+```
+### Data of teams with even win-loss
+```{r echo = FALSE}
+equal_wl = wl[which(wl$Win == wl$Loss),]
+equal_wl[c("Year", "Team", "Win", "Loss")]
+```
+### Teams with an even win-loss
+```{r echo = FALSE}
+unique(equal_wl$Team)
+```
+
+# 3. Season Stats  
+
+Find out:  
+  + Player with the highest 3-pt attempt rate in a season.   
+  + Player with the highest free throw rate in a season.   
+  + What year/season does Lebron James scored the highest?   
+  + What year/season does Michael Jordan scored the highest?   
+  + Player efficiency rating of Kobe Bryant in the year where his MP is the lowest?   
+  
+### Read Data
+```{r echo = FALSE}
+data = read.csv('data/seasons_stats.csv')
+data$Year = as.numeric(data$Year)
+head(data)
+```
+### Players with the Highest 3-Point Attempt Rate In a Season per Year
+```{r echo = FALSE}
+# Players with highest 3-point attempt rate in a season per year?
+df_agg_X3PAr = do.call(rbind, lapply(split(data, as.factor(data$Year)), function(x) {return(x[which.max(x$X3PAr),])}))
+df_agg_X3PAr[order(df_agg_X3PAr$Year, decreasing = FALSE),][c('Year', 'Player', 'X3PAr')]
+```
+
+```{r echo = FALSE}
+df_agg_X3PAr[c("Player", 'X3PAr')][which(df_agg_X3PAr$X3PAr == max(data$X3PAr, na.rm = TRUE)),]
+```
+
+```{r echo = FALSE}
+df_agg_X3PAr[c("Player", 'X3PAr')][which(df_agg_X3PAr$X3PAr == max(data$X3PAr, na.rm = TRUE)),]$Player
+```
+
+
+
+### Players with the Highest 3-Point Attempt Rate In a Season of All the Player's Time
+```{r echo = FALSE}
+data[c("Player", 'X3PAr')][which(data$X3PAr == max(data$X3PAr, na.rm = TRUE)),]
+```
+```{r echo = FALSE}
+data[c("Player", 'X3PAr')][which(data$X3PAr == max(data$X3PAr, na.rm = TRUE)),]$Player
+```
+
+### Players with the Highest Free Throw Rate In a Season per Year
+```{r echo = FALSE}
+# Players with highest 3-point attempt rate in a season per year?
+df_agg_FTr = do.call(rbind, lapply(split(data, as.factor(data$Year)), function(x) {return(x[which.max(x$FTr),])}))
+df_agg_FTr[order(df_agg_FTr$Year, decreasing = FALSE),][c('Year', 'Player', 'FTr')]
+```
+```{r echo = FALSE}
+df_agg_FTr[c("Player", 'FTr')][which(df_agg_FTr$FTr == max(df_agg_FTr$FTr, na.rm = TRUE)),]
+```
+```{r echo = FALSE}
+df_agg_FTr[c("Player", 'FTr')][which(df_agg_FTr$FTr == max(df_agg_FTr$FTr, na.rm = TRUE)),]$Player
+```
+
+
+### Players with the Highest Free Throw Rate in a Season All Player's Time
+```{r echo = FALSE}
+data[c("Player", 'FTr')][which(data$FTr == max(data$FTr, na.rm = TRUE)),]
+```
+```{r echo = FALSE}
+data[c("Player", 'FTr')][which(data$FTr == max(data$FTr, na.rm = TRUE)),]$Player
+```
+### Players Who Scored the Highest Each Year
+```{r echo = FALSE}
+# Who are the players with the highest Scores each year?
+df_agg_teams = do.call(rbind, lapply(split(data, as.factor(data$Year)), function(x) {return(x[which.max(x$PTS),])}))
+df_agg_teams[order(df_agg_teams$Year, decreasing = FALSE),]
+```
+### Years LeBron James Scored the Highest that Season
+```{r echo = FALSE}
+df_agg_teams[which(df_agg_teams$Player == 'LeBron James'),]
+```
+```{r echo = FALSE}
+df_agg_teams[which(df_agg_teams$Player == 'LeBron James'),]$Year
+```
+### Year LeBron James Scored his Highest Points of All Time
+
+```{r echo = FALSE}
+data[which(data$Player == 'LeBron James'),][which.max(data[which(data$Player == 'LeBron James'),]$PTS),]
+```
+```{r echo = FALSE}
+data[which(data$Player == 'LeBron James'),][which.max(data[which(data$Player == 'LeBron James'),]$PTS),]$Year
+```
+
+### Years Michael Jordan Scored the Highest that Season
+```{r echo = FALSE}
+df_agg_teams[which(df_agg_teams$Player == 'Michael Jordan*'),]
+```
+```{r echo = FALSE}
+df_agg_teams[which(df_agg_teams$Player == 'Michael Jordan*'),]$Year
+```
+### Year Michael Jordan Scored His Highest Points of All Time
+```{r echo = FALSE}
+data[which(data$Player == 'Michael Jordan*'),][which.max(data[which(data$Player == 'Michael Jordan*'),]$PTS),]
+```
+```{r echo = FALSE}
+data[which(data$Player == 'Michael Jordan*'),][which.max(data[which(data$Player == 'Michael Jordan*'),]$PTS),]$Year
+```
+
+### Player efficiency rating of Kobe Bryant in the year where his MP is the lowest?
+```{r echo = FALSE}
+kb_data = data[which(data$Player == 'Kobe Bryant'),]
+kb_data[which.min(kb_data$MP),]$PER
+```
+# 4. National Universities Rankings  
+Find Out:  
++ University with the most number of undergrads  
++ Average Tuition in the Top 10 University
+
+### Read Data  
+```{r echo = FALSE}
+data = read.csv('data/National Universities Rankings.csv')
+
+```
+
+### University with the most number of undergrads
+```{r echo = FALSE}
+data[which.max(data[['Undergrad.Enrollment']]),]$Name
+```
+### Top 10 Universities
+
+Top 10 universities based on rank.
+```{r echo = FALSE}
+head(data[order(data[['Rank']], decreasing = FALSE),], 10)
+```
+
+
+### Average Tuition of the Top 10 Universities
+```{r echo = FALSE}
+# Get average tuition rates of to 10 univerisities
+mean(as.numeric(gsub(",", "", sub('.', '', head(data[order(data[['Rank']], decreasing = FALSE),], 10)[['Tuition.and.fees']]))))
+```
+# END OF CODE
