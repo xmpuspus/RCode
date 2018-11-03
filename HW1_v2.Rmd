@@ -231,44 +231,65 @@ data[c("Player", 'FTr')][which(data$FTr == max(data$FTr, na.rm = TRUE)),]
 data[c("Player", 'FTr')][which(data$FTr == max(data$FTr, na.rm = TRUE)),]$Player
 ```
 
-### Data of Players Who Scored the Highest Each Year
+
+```{r}
+head(data)
+```
+
+### Number of Teams Each Player Played In Per Year
+```{r}
+count_agg = aggregate(data$PTS, by=list(data$Year, data$Player), FUN=length)
+names(count_agg) = c('Year', 'Player', 'team_count')
+count_agg[order(count_agg$team_count, decreasing = TRUE),]
+```
+### Aggregate Each Player's Scores for Each Year
+```{r}
+pts_agg = aggregate(data$PTS, by=list(data$Year, data$Player), FUN=sum)
+names(pts_agg) = c('Year', 'Player', 'Total_PTS')
+```
+
+### Players With Highest Total Score Each Year
 ```{r echo = TRUE}
 # Who are the players with the highest Scores each year?
-df_agg_teams = do.call(rbind, lapply(split(data, as.factor(data$Year)), function(x) {return(x[which.max(x$PTS),])}))
-df_agg_teams[order(df_agg_teams$Year, decreasing = FALSE),][c('Year', 'Player', 'PTS')]
+df_agg_pts = do.call(rbind, lapply(split(pts_agg, as.factor(pts_agg$Year)), function(x) {return(x[which.max(x$Total_PTS),])}))
+
+
+agg_pts_max = df_agg_pts[order(df_agg_pts$Year, decreasing = FALSE),][c('Year', 'Player', 'Total_PTS')]
+agg_pts_max
 ```
+
 ### Years LeBron James Scored the Highest that Season
 ```{r echo = TRUE}
-df_agg_teams[which(df_agg_teams$Player == 'LeBron James'),]
+df_agg_pts[which(df_agg_pts$Player == 'LeBron James'),]
 ```
 ```{r echo = TRUE}
-df_agg_teams[which(df_agg_teams$Player == 'LeBron James'),]$Year
+df_agg_pts[which(df_agg_pts$Player == 'LeBron James'),]$Year
 ```
 Using this method of aggregation, we see that LeBron James has never had the highest score compared to other players for each year.
-  
+
 ### Year LeBron James Scored his Highest Points of All Time  
 For this type of aggregation, we get LeBron's max highest point and output the year he got this highest point.
 
 ```{r echo = TRUE}
-data[which(data$Player == 'LeBron James'),][which.max(data[which(data$Player == 'LeBron James'),]$PTS),]
+pts_agg[which(pts_agg$Player == 'LeBron James'),][which.max(pts_agg[which(pts_agg$Player == 'LeBron James'),]$Total_PTS),]
 ```
 ```{r echo = TRUE}
-data[which(data$Player == 'LeBron James'),][which.max(data[which(data$Player == 'LeBron James'),]$PTS),]$Year
+pts_agg[which(pts_agg$Player == 'LeBron James'),][which.max(pts_agg[which(pts_agg$Player == 'LeBron James'),]$Total_PTS),]$Year
 ```
 
 ### Years Michael Jordan Scored the Highest that Season
 ```{r echo = TRUE}
-df_agg_teams[which(df_agg_teams$Player == 'Michael Jordan*'),]
+pts_agg[which(pts_agg$Player == 'Michael Jordan*'),]
 ```
 ```{r echo = TRUE}
-df_agg_teams[which(df_agg_teams$Player == 'Michael Jordan*'),]$Year
+pts_agg[which(pts_agg$Player == 'Michael Jordan*'),]$Year
 ```
 ### Year Michael Jordan Scored His Highest Points of All Time
 ```{r echo = TRUE}
-data[which(data$Player == 'Michael Jordan*'),][which.max(data[which(data$Player == 'Michael Jordan*'),]$PTS),]
+pts_agg[which(pts_agg$Player == 'Michael Jordan*'),][which.max(pts_agg[which(pts_agg$Player == 'Michael Jordan*'),]$Total_PTS),]
 ```
 ```{r echo = TRUE}
-data[which(data$Player == 'Michael Jordan*'),][which.max(data[which(data$Player == 'Michael Jordan*'),]$PTS),]$Year
+pts_agg[which(pts_agg$Player == 'Michael Jordan*'),][which.max(pts_agg[which(pts_agg$Player == 'Michael Jordan*'),]$Total_PTS),]$Year
 ```
 
 ### Player efficiency rating of Kobe Bryant in the year where his MP is the lowest?
