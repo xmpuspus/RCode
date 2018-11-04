@@ -1,0 +1,12 @@
+name: Assignment02
+title: Assignment02
+username:
+account: xmpuspus
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 551372
+bundleId: 1680635
+url: https://xmpuspus.shinyapps.io/Assignment02/
+when: 1541305848.21458
+asMultiple: FALSE
+asStatic: FALSE
