@@ -180,61 +180,6 @@ data = read.csv('data/seasons_stats.csv')
 data$Year = as.numeric(data$Year)
 head(data)
 ```
-### Data of Players with the Highest 3-Point Attempt Rate In a Season per Year
-```{r echo = TRUE}
-# Players with highest 3-point attempt rate in a season per year?
-df_agg_X3PAr = do.call(rbind, lapply(split(data, as.factor(data$Year)), function(x) {return(x[which.max(x$X3PAr),])}))
-df_agg_X3PAr[order(df_agg_X3PAr$Year, decreasing = FALSE),][c('Year', 'Player', 'X3PAr')]
-```
-### Data of Players with the Highest 3-Point Attempt Rate
-```{r echo = TRUE}
-df_agg_X3PAr[c("Player", 'X3PAr')][which(df_agg_X3PAr$X3PAr == max(data$X3PAr, na.rm = TRUE)),]
-```
-### Players with the Highest 3-Point Attempt Rate
-```{r echo = TRUE}
-unique(df_agg_X3PAr[c("Player", 'X3PAr')][which(df_agg_X3PAr$X3PAr == max(data$X3PAr, na.rm = TRUE)),]$Player)
-```
-
-
-
-### Data of Players with the Highest 3-Point Attempt Rate In a Season of All the Player's Time
-```{r echo = TRUE}
-data[c("Player", 'X3PAr')][which(data$X3PAr == max(data$X3PAr, na.rm = TRUE)),]
-```
-### Players with the Highest 3-Point Attempt Rate In a Season of All the Player's Time
-```{r echo = TRUE}
-unique(data[c("Player", 'X3PAr')][which(data$X3PAr == max(data$X3PAr, na.rm = TRUE)),]$Player)
-```
-
-### Data of Players with the Highest Free Throw Rate In a Season per Year
-```{r echo = TRUE}
-# Players with highest 3-point attempt rate in a season per year?
-df_agg_FTr = do.call(rbind, lapply(split(data, as.factor(data$Year)), function(x) {return(x[which.max(x$FTr),])}))
-df_agg_FTr[order(df_agg_FTr$Year, decreasing = FALSE),][c('Year', 'Player', 'FTr')]
-```
-### Data of Players with the Highest Free Throw Rate In a Season
-```{r echo = TRUE}
-df_agg_FTr[c("Player", 'FTr')][which(df_agg_FTr$FTr == max(df_agg_FTr$FTr, na.rm = TRUE)),]
-```
-### Players with the Highest Free Throw Rate In a Season
-```{r}
-df_agg_FTr[c("Player", 'FTr')][which(df_agg_FTr$FTr == max(df_agg_FTr$FTr, na.rm = TRUE)),]$Player
-```
-
-### Data of Players with the Highest Free Throw Rate in a Season All Player's Time
-```{r echo = TRUE}
-data[c("Player", 'FTr')][which(data$FTr == max(data$FTr, na.rm = TRUE)),]
-```
-
-### Players with the Highest Free Throw Rate in a Season All Player's Time
-```{r echo = TRUE}
-data[c("Player", 'FTr')][which(data$FTr == max(data$FTr, na.rm = TRUE)),]$Player
-```
-
-
-```{r}
-head(data)
-```
 
 ### Number of Teams Each Player Played In Per Year
 ```{r}
@@ -242,6 +187,76 @@ count_agg = aggregate(data$PTS, by=list(data$Year, data$Player), FUN=length)
 names(count_agg) = c('Year', 'Player', 'team_count')
 count_agg[order(count_agg$team_count, decreasing = TRUE),]
 ```
+
+Since we see that players play for multiple teams, we need some sort of aggregation for the next sections.
+
+### Aggregate 3-Point Attempt Rate per Person per Year  
+Since players play for multiple teams per year, taking the average of their 3-point attempt rate is equivalent to aggregating the successful 3-point attempts versus total 3-point attempts.
+```{r}
+threepar_agg = aggregate(data$X3PAr, by=list(data$Year, data$Player), FUN=mean)
+names(threepar_agg) = c('Year', 'Player', 'avg_X3PAr')
+threepar_agg
+```
+
+
+
+### Data of Players with the Highest 3-Point Attempt Rate In a Season per Year
+```{r echo = TRUE}
+# Players with highest 3-point attempt rate in a season per year?
+df_agg_X3PAr = do.call(rbind, lapply(split(threepar_agg, as.factor(threepar_agg$Year)), function(x) {return(x[which.max(x$avg_X3PAr),])}))
+df_agg_X3PAr[order(df_agg_X3PAr$Year, decreasing = FALSE),][c('Year', 'Player', 'avg_X3PAr')]
+```
+### Data of Players with the Highest 3-Point Attempt Rate
+```{r echo = TRUE}
+df_agg_X3PAr[c("Player", 'avg_X3PAr')][which(df_agg_X3PAr$avg_X3PAr == max(df_agg_X3PAr$avg_X3PAr, na.rm = TRUE)),]
+```
+### Players with the Highest 3-Point Attempt Rate
+```{r echo = TRUE}
+unique(df_agg_X3PAr[c("Player", 'avg_X3PAr')][which(df_agg_X3PAr$avg_X3PAr == max(df_agg_X3PAr$avg_X3PAr, na.rm = TRUE)),]$Player)
+```
+### Data of Players with the Highest 3-Point Attempt Rate In a Season of All the Player's Time
+```{r echo = TRUE}
+threepar_agg[c("Player", 'avg_X3PAr')][which(threepar_agg$avg_X3PAr == max(threepar_agg$avg_X3PAr, na.rm = TRUE)),]
+```
+### Players with the Highest 3-Point Attempt Rate In a Season of All the Player's Time
+```{r echo = TRUE}
+unique(threepar_agg[c("Player", 'avg_X3PAr')][which(threepar_agg$avg_X3PAr == max(threepar_agg$avg_X3PAr, na.rm = TRUE)),]$Player)
+```
+
+### Aggregate Free Throw Rate per Person per Year  
+Since players play for multiple teams per year, taking the average of their free throw rate is equivalent to aggregating the successful free throws versus total free throws.
+```{r}
+ftr_agg = aggregate(data$FTr, by=list(data$Year, data$Player), FUN=mean)
+names(ftr_agg) = c('Year', 'Player', 'avg_FTr')
+ftr_agg
+```
+
+
+### Data of Players with the Highest Free Throw Rate In a Season per Year
+```{r echo = TRUE}
+# Players with highest 3-point attempt rate in a season per year?
+df_agg_FTr = do.call(rbind, lapply(split(ftr_agg, as.factor(ftr_agg$Year)), function(x) {return(x[which.max(x$avg_FTr),])}))
+df_agg_FTr[order(df_agg_FTr$Year, decreasing = FALSE),][c('Year', 'Player', 'avg_FTr')]
+```
+### Data of Players with the Highest Free Throw Rate In a Season
+```{r echo = TRUE}
+df_agg_FTr[c("Player", 'avg_FTr')][which(df_agg_FTr$avg_FTr == max(df_agg_FTr$avg_FTr, na.rm = TRUE)),]
+```
+### Players with the Highest Free Throw Rate In a Season
+```{r}
+df_agg_FTr[c("Player", 'avg_FTr')][which(df_agg_FTr$avg_FTr == max(df_agg_FTr$avg_FTr, na.rm = TRUE)),]$Player
+```
+
+### Data of Players with the Highest Free Throw Rate in a Season in All Player's Time
+```{r echo = TRUE}
+ftr_agg[c("Player", 'avg_FTr')][which(ftr_agg$avg_FTr == max(ftr_agg$avg_FTr, na.rm = TRUE)),]
+```
+
+### Players with the Highest Free Throw Rate in a Season All Player's Time
+```{r echo = TRUE}
+ftr_agg[c("Player", 'avg_FTr')][which(ftr_agg$avg_FTr == max(ftr_agg$avg_FTr, na.rm = TRUE)),]$Player
+```
+
 ### Aggregate Each Player's Scores for Each Year
 ```{r}
 pts_agg = aggregate(data$PTS, by=list(data$Year, data$Player), FUN=sum)
