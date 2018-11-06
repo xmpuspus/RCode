@@ -6,6 +6,8 @@ By:  Xavier M. Puspus
 Intro to R: Homework 1
 
 This markdown document shows the code as well as the output for Homework 1 on Introduction to R.
+See this [link](http://rpubs.com/xpuspus65929/subsetting_HW1_with_code) for the R publication.  
+
 
 # 1. WHO Dataset
 
@@ -320,6 +322,7 @@ Find Out:
 ### Read Data  
 ```{r echo = TRUE}
 data = read.csv('data/National Universities Rankings.csv')
+data$Undergrad.Enrollment = as.numeric(gsub(",", "", data$Undergrad.Enrollment))
 head(data)
 ```
 
@@ -328,6 +331,13 @@ head(data)
 data[which.max(data[['Undergrad.Enrollment']]),]$Name
 ```
 ### Top 10 Universities
+
+Top 10 universities based on number of undergrad enrollments.
+```{r echo = TRUE}
+head(data[order(data[['Undergrad.Enrollment']], decreasing = TRUE),], 10)[c('Name', 'Undergrad.Enrollment')]
+
+```
+
 
 Top 10 universities based on rank.
 ```{r echo = TRUE}
