@@ -42,7 +42,7 @@ rem_na <- function(sample_vec) {
 
 
 ```
-### 2. Computes the factorial of given an integer argument.  
+### 2. Computes the factorial given an integer argument.  
 The output should be a vector of length 1. I used recursive calculation of *n* since its fast but memory intensive.
 
 ```{r}
@@ -56,6 +56,37 @@ return (1)
 return (x * factorial(x - 1)) 
 } 
 }
+```
+
+### Factorials  
+```{r echo = FALSE}
+library(shiny)
+
+
+ui <- fluidPage(
+  headerPanel("Compute Factorial"),
+  sidebarLayout(
+  sidebarPanel(
+  numericInput("n", "Number:", 10, min = 1, max = 100)
+),
+mainPanel(
+  h4('Factorial is:'),
+  verbatimTextOutput("value"))
+ )
+)
+
+server <- function(input, output) {
+  
+
+  
+  output$value <- renderText({
+  print(factorial(input$n))
+
+  })
+}
+
+shinyApp(ui = ui, server = server)
+
 ```
 
 ### 3. Sorts a given vector in decreasing order.  
@@ -98,7 +129,7 @@ nth_largest <- function(arr, nth){
 
 ```
 
-### 5. Create a function to compute for your net pay at work.  
+### 5. Create a function to compute for your net pay at work
 We compute the monthly net pay based on:    
 
 + monthly basic pay  
@@ -135,39 +166,7 @@ net_pay = function(basic, tax_alw = 0, ntax_alw = 0, lwop_days = 0, months_pay =
 net_pay(50000, 1000, 1000, 2, 13, 20)
 ```
 
-# Shiny Applications
-This is an interactive application that allows reactive adjustments of values where we instantly see the results. I built 2 apps, 1 for factorial and 1 for computing net pay.
 
-### Factorials  
-```{r echo = FALSE}
-library(shiny)
-
-
-ui <- fluidPage(
-  headerPanel("Compute Factorial"),
-  sidebarLayout(
-  sidebarPanel(
-  numericInput("n", "Number:", 10, min = 1, max = 100)
-),
-mainPanel(
-  h4('Factorial is:'),
-  verbatimTextOutput("value"))
- )
-)
-
-server <- function(input, output) {
-  
-
-  
-  output$value <- renderText({
-  print(factorial(input$n))
-
-  })
-}
-
-shinyApp(ui = ui, server = server)
-
-```
 ### Net Pay Calculator
 ```{r echo = FALSE}
 library(shiny)
@@ -203,6 +202,85 @@ shinyApp(ui = ui2, server = server2)
 
 ```
 
+### 6. Prime Checker  
+Check if the integer is prime or not (TRUE or FALSE).
 
+```{r }
+isPrime <- function(num){ return (sum(num/1:num == num %/% 1:num) == 2 )}
+
+```
+
+```{r echo = FALSE}
+library(shiny)
+
+
+ui <- fluidPage(
+  headerPanel("Check if Number is Prime"),
+  sidebarLayout(
+  sidebarPanel(
+  numericInput("n", "Number:", 10, min = 1)
+),
+mainPanel(
+  h4('Prime?'),
+  verbatimTextOutput("value"))
+ )
+)
+
+server <- function(input, output) {
+  
+
+  
+  output$value <- renderText({
+  print(isPrime(input$n))
+
+  })
+}
+
+shinyApp(ui = ui, server = server)
+
+```
+
+### 7. Computes the compound interest of an investment.  
+Given are the rate, time, and initial amount or principal.
+
+```{r}
+compound_interest = function(principal, interest_rate = 0.01, n_cpd_periods = 1){
+  return (principal * ((1 + interest_rate)**n_cpd_periods - 1))
+}
+
+compound_interest(1000)
+```
+
+### Compound Interest Calculator
+```{r echo = FALSE}
+library(shiny)
+
+
+ui2 <- fluidPage(
+  sidebarLayout(
+  sidebarPanel(
+  numericInput("principal", "Starting Principal:", 1000, step = 100, min = 10),
+  numericInput("interest_rate", "Nominal Interest Rate:", 0.01, step = 0.01, min = 0.01, max = 1),
+  numericInput("n_cpd_periods", "Number of Compounding Periods:", 1, step = 1, min = 1)
+),
+mainPanel(
+  h4('Compounding Interest:'),
+  verbatimTextOutput("value"))
+ )
+)
+
+server2 <- function(input, output) {
+  
+
+  
+  output$value <- renderText({
+  print(compound_interest(input$principal, input$interest_rate, input$n_cpd_periods))
+
+  })
+}
+
+shinyApp(ui = ui2, server = server2)
+
+```
 
 
