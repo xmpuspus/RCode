@@ -5,8 +5,8 @@ account: xmpuspus
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 551372
-bundleId: 1680987
+bundleId: 1687213
 url: https://xmpuspus.shinyapps.io/Assignment02/
-when: 1541336621.86389
+when: 1541591639.3052
 asMultiple: FALSE
 asStatic: FALSE
