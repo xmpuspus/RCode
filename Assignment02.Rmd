@@ -284,3 +284,47 @@ shinyApp(ui = ui2, server = server2)
 ```
 
 
+### 8. Define an R function that accepts a POSIXct as argument and outputs the day of the week as characters.  
+(Don't use special functions. Instead use modulo and define weekdays)
+
+```{r}
+# example date
+date_nw = as.POSIXct(as.Date("01/01/1970", format = "%m/%d/%Y"))
+
+# Accepts POSIXct as input
+which_weekday = function(date_nw) {c("Thursday", "Friday", "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday")[((unclass(date_nw)/86400) %% 7) + 1]}
+
+which_weekday(date_nw)
+
+```
+
+### What day is it?  
+
+```{r echo = FALSE}
+library(shiny)
+
+
+ui3 <- fluidPage(
+  sidebarLayout(
+  sidebarPanel(
+  numericInput("year", "Year:", 1970, step = 1, min = 1970),
+  numericInput("month", "Month:", 1, step = 1, min = 1, max = 12),
+  numericInput("day", "Day:", 1, step = 1, min = 1, 31)
+),
+mainPanel(
+  h4('Weekday:'),
+  verbatimTextOutput("value"))
+ )
+)
+
+server3 <- function(input, output) {
+
+  output$value <- renderText({
+  print(which_weekday(as.POSIXct(as.Date(paste(c(input$month, input$day, input$year), collapse = "/"), format = "%m/%d/%Y"))))
+
+  })
+}
+
+shinyApp(ui = ui3, server = server3)
+
+```
