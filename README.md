@@ -1,4 +1,9 @@
 # RCode
+
+**Author:** Xavier M. Puspus
+Data Scientist, MABA Student
+
+
 This repository contains basic R code for simple data wrangling.
 
 We have 2 main notebooks:  
@@ -6,5 +11,4 @@ We have 2 main notebooks:
 2. Discusses functions, loops etc to answer the machine problem for MAB 2111 Computing for Analytics 1
 
 
-### Author: Xavier M. Puspus
-### Data Scientist, MABA Student
+
