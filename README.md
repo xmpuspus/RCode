@@ -1,6 +1,6 @@
 # RCode
 
-**Author:** Xavier M. Puspus
+**Author:** Xavier M. Puspus . 
 Data Scientist, MABA Student
 
 
